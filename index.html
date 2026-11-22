@@ -237,8 +237,7 @@ details.f .body{padding:0 16px 16px}
     var big=h("span",{class:"wm big","aria-hidden":"true"});
     [["a","A"],["i","I"],["dea","dea"],["guy","Guy"],["dev",".dev"]].forEach(function(x){big.appendChild(h("span",{class:x[0],text:x[1]}))});
     app.appendChild(h("section",{class:"hero"},
-      big,h("span",{class:"wmcap"},h("b",{class:"c1",text:"AI"})," + ",h("b",{class:"c2",text:"Idea"})," + ",h("b",{text:"Guy"}),": the I is shared"),
-      h("h1",{text:"Get more out of AI in 2 minutes."}),
+      big,h("h1",{text:"Get more out of AI in 2 minutes."}),
       h("p",{class:"lede",text:"Answer 3 quick questions. Get tips that fit you, a prompt to paste into any AI, and a simple to-do card for your next step."}),
       h("button",{class:"btn",type:"button",text:"Start (30 seconds)",onclick:function(){run.mode="quiz";run.qi=0;route()}}),
       h("p",{class:"small mut",style:"margin-top:12px",text:"Free. No sign-up. Nothing leaves your device."})));

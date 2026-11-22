@@ -2,17 +2,12 @@
 .wm{font:800 1.2rem var(--f-head);letter-spacing:-.01em;color:var(--fg);white-space:nowrap;display:inline-block;position:relative}
 .wm .a,.wm .i{color:var(--accent)}
 .wm .dev{color:var(--mut);font-weight:600}
-.wm .dea,.wm .guy,.wm .dev,.wmcap{opacity:0}
-.wm.go .a{animation:wmA 1.7s 1.1s ease both}
+.wm .dea,.wm .guy,.wm .dev,.wm.go .a{animation:wmA 1.7s 1.1s ease both}
 .wm.go .dea{animation:wmIn .5s 1.2s ease both}
 .wm.go .guy{animation:wmIn .5s 2.8s ease both}
 .wm.go .dev{animation:wmIn .5s 3.4s ease both}
-.wm.go~.wmcap{animation:wmIn .6s 3.9s ease both}
-.wm.still .dea,.wm.still .guy,.wm.still .dev,.wm.still~.wmcap{opacity:1}
-@keyframes wmA{0%{color:var(--accent);opacity:1}18%,78%{color:var(--mut);opacity:.35}100%{color:var(--accent);opacity:1}}
+.wm.go~.wm.still .dea,.wm.still .guy,.wm.still .dev,.wm.still~@keyframes wmA{0%{color:var(--accent);opacity:1}18%,78%{color:var(--mut);opacity:.35}100%{color:var(--accent);opacity:1}}
 @keyframes wmIn{from{opacity:0;transform:translateY(.25em)}to{opacity:1;transform:none}}
 /* big version + caption that names the three words (the I is shared) */
-.wm.big{font-size:clamp(2.4rem,12vw,4.2rem)}
-.wmcap{display:block;font:500 .95rem var(--f-body);color:var(--mut);margin-top:6px}
-.wmcap b{font-weight:700}.wmcap .c1{color:var(--accent)}.wmcap .c2{color:var(--fg)}
-@media (prefers-reduced-motion:reduce){.wm .dea,.wm .guy,.wm .dev,.wmcap{opacity:1;animation:none!important}.wm .a{animation:none!important}}
+.wm.big{font-size:clamp(2.4rem,12vw,4.2rem);margin-bottom:.25em}
+@media (prefers-reduced-motion:reduce){.wm .dea,.wm .guy,.wm .dev,
