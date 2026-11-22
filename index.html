@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AIdeaGuy</title>
+<meta name="description" content="Answer three quick questions and get a plan for getting more from AI, plus a task card you can download as your to-do list. Free, no sign-up.">
+<meta name="theme-color" content="#0b7a6b">
+<meta property="og:title" content="AIdeaGuy: get more from AI"><meta property="og:description" content="Three quick questions, then a plan and a task card you can download. Free, no sign-up."><meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230b7a6b%27/%3E%3Cpath d=%27M9 17l5 5 9-11%27 stroke=%27white%27 stroke-width=%274%27 fill=%27none%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: phone first. Sticky top bar, one task per screen, bottom tab bar on phones that moves to the top bar from 720px.
+   Accent only on the main action and the current tab. One family (Inter) for the tool; Bricolage only for the landing headline. */
+:root{
+  --bg:#f6f8fa; --surface:#ffffff; --fg:#13202b; --mut:#566573; --line:#d5dde5; --field:#ffffff;
+  --accent:#0b7a6b; --accent-fg:#ffffff; --accent-soft:#e1f2ef; --note:#fbefd9;
+  --f-head:"Bricolage Grotesque","Inter","Segoe UI",system-ui,sans-serif;
+  --f-body:"Inter","Segoe UI",system-ui,sans-serif;
+  --bar-h:56px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e161d; --surface:#16212b; --fg:#e8eef3; --mut:#9aabb9; --line:#2a3b4c; --field:#0e161d;
+  --accent:#4fd1bd; --accent-fg:#06201b; --accent-soft:#12302c; --note:#33260f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e161d; --surface:#16212b; --fg:#e8eef3; --mut:#9aabb9; --line:#2a3b4c; --field:#0e161d;
+  --accent:#4fd1bd; --accent-fg:#06201b; --accent-soft:#12302c; --note:#33260f; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:1rem/1.55 var(--f-body);-webkit-text-size-adjust:100%}
+::selection{background:var(--accent);color:var(--accent-fg)}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+a{color:var(--accent);text-underline-offset:3px}
+h1,h2,h3{margin:0;line-height:1.2;text-wrap:balance}
+h1{font-family:var(--f-head);font-weight:800;font-size:clamp(2rem,9vw,3rem);letter-spacing:-.02em}
+h2{font-size:1.4rem;font-weight:600}
+h3{font-size:1.05rem;font-weight:600}
+p{margin:0 0 .75rem;max-width:65ch}
+.mut{color:var(--mut)}
+.small{font-size:.9rem}
+
+/* top bar + nav */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:12px;justify-content:space-between;height:var(--bar-h);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:30}
+.brand{font:800 1.2rem var(--f-head);letter-spacing:-.01em;text-decoration:none;color:var(--fg)}
+.priv{font-size:.8rem;color:var(--mut)}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);display:flex;
+  padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+nav.tabs a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;min-height:56px;font-size:.78rem;font-weight:500;color:var(--mut);text-decoration:none}
+nav.tabs a svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs a[aria-current="page"]{color:var(--accent);font-weight:600}
+.wrap{max-width:640px;margin:0 auto;padding-top:24px;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (min-width:720px){
+  nav.tabs{position:static;border:0;background:none;padding:0;gap:4px}
+  nav.tabs a{flex-direction:row;gap:6px;min-height:44px;padding:8px 14px;border-radius:10px;font-size:.95rem}
+  nav.tabs a[aria-current="page"]{background:var(--accent-soft)}
+  .top{padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+  .priv{display:none}
+  .wrap{padding-bottom:64px;padding-top:40px}
+}
+
+/* controls */
+.btn,.ghost,.chip{min-height:48px;border-radius:12px;padding:12px 18px;border:1px solid var(--line);background:var(--surface);font-weight:500;transition:border-color .15s,background-color .15s}
+.btn{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:600;width:100%}
+.btn:hover{filter:brightness(1.06)}
+.ghost{background:transparent;width:100%}
+.ghost:hover,.chip:hover{border-color:var(--accent)}
+.chip{text-align:left;width:100%}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
+.stack{display:grid;gap:10px;margin-top:16px}
+.inline{display:flex;gap:8px;flex-wrap:wrap}
+.inline .chip{width:auto;flex:1 1 auto;text-align:center}
+@media (min-width:480px){.btn,.ghost{width:auto}}
+.linkbtn{background:none;border:0;padding:8px 0;color:var(--accent);min-height:44px;text-decoration:underline;text-underline-offset:3px;text-align:left}
+textarea,input[type=text],input[type=email]{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--field);font-size:1rem;line-height:1.45;min-height:48px}
+textarea{min-height:84px;resize:vertical}
+textarea::placeholder,input::placeholder{color:var(--mut)}
+label{display:block;font-weight:600;margin-bottom:4px}
+.help{font-size:.9rem;color:var(--mut);margin-bottom:8px}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin:6px 0 20px}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .2s ease-out}
+.back{margin-top:12px}
+
+/* content blocks (plain, not cards) */
+.hero p.lede{font-size:1.15rem;margin-top:12px}
+.hero .btn{margin-top:20px}
+.steps{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:12px}
+.steps b{display:block}
+.sect{margin-top:36px;padding-top:24px;border-top:1px solid var(--line)}
+.note{background:var(--note);border-radius:10px;padding:12px 14px;margin:14px 0}
+.soft{background:var(--accent-soft);border-radius:10px;padding:12px 14px;margin:14px 0}
+.tips{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:14px}
+.tips li .t{display:block}
+.rate{display:flex;gap:8px;margin-top:4px}
+.rate button{min-height:44px;padding:6px 14px;border-radius:10px;border:1px solid var(--line);background:transparent;font-size:.88rem;color:var(--mut)}
+.rate button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--fg);font-weight:600}
+.plain{margin:10px 0 0;padding-left:1.2rem;display:grid;gap:8px}
+pre.prompt{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;font:.92rem/1.5 var(--f-body);margin:8px 0 0}
+.vote{display:grid;gap:8px;margin:10px 0}
+.vote div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;overflow-wrap:anywhere}
+.vote b{font-weight:600}
+.slot{margin-top:20px}
+.slot form{display:grid;gap:10px}
+.follow{margin-top:28px}
+.follow a{margin-right:16px}
+
+/* card form */
+details.f{border:1px solid var(--line);border-radius:12px;background:var(--surface);margin:10px 0}
+details.f>summary{list-style:none;cursor:pointer;padding:14px 16px;min-height:52px;display:flex;justify-content:space-between;gap:12px;align-items:center;font-weight:600}
+details.f>summary::-webkit-details-marker{display:none}
+details.f>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:rotate(45deg);flex:none;transition:transform .15s}
+details.f[open]>summary::after{transform:rotate(-135deg)}
+details.f .body{padding:0 16px 16px}
+.tagc{font-size:.78rem;font-weight:500;color:var(--mut);margin-left:6px}
+.tagc.must{color:var(--accent);font-weight:600}
+.cnt{font-size:.9rem;color:var(--mut);margin:4px 0 10px}
+.err{color:#b3261e;font-size:.92rem;margin-top:8px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .err{color:#ff9a8f}}
+:root[data-theme="dark"] .err{color:#ff9a8f}
+
+/* checklist + cards */
+.todo{list-style:none;margin:10px 0;padding:0;display:grid;gap:8px}
+.todo label{display:flex;gap:12px;align-items:flex-start;font-weight:400;margin:0;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);min-height:48px;cursor:pointer}
+.todo input{width:22px;height:22px;flex:none;margin-top:1px;accent-color:var(--accent)}
+.todo input:checked+span{color:var(--mut);text-decoration:line-through}
+.cardbox{border:1px solid var(--line);border-radius:12px;background:var(--surface);margin:12px 0}
+.cardbox .row{padding:12px 14px;border-top:1px solid var(--line);overflow-wrap:anywhere;white-space:pre-wrap}
+.cardbox .row:first-child{border-top:0}
+.cardbox b{display:block;font-size:.85rem;color:var(--mut);font-weight:600}
+.stats{display:flex;gap:24px;margin:8px 0 16px}
+.stats b{display:block;font:700 1.6rem var(--f-head);font-variant-numeric:tabular-nums}
+.empty{padding:20px;border:1px dashed var(--line);border-radius:12px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<link rel="stylesheet" href="wm.css">
+</head><body>
+
+<header class="top">
+  <a class="brand" href="#start" aria-label="AIdeaGuy home"><span class="wm" aria-hidden="true"><span class="a">A</span><span class="i">I</span><span class="dea">dea</span><span class="guy">Guy</span><span class="dev">.dev</span></span></a>
+  <span class="priv">Free · stays on your device</span>
+  <nav class="tabs" aria-label="Main">
+    <a href="#start" id="n-start"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z"/></svg>Start</a>
+    <a href="#cards" id="n-cards"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>My cards</a>
+    <a href="#more" id="n-more"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Go further</a>
+  </nav>
+</header>
+<main class="wrap" id="app" aria-live="polite"></main>
+
+<script src="wm.js"></script>
+<script>
+(function(){
+  var KEY="aideaguy.v2", app=document.getElementById("app"), blocked=false;
+  /* Optional config, read from links.json beside this page: {"tiktok":"https://...","linkedin":"https://...","leadEndpoint":"https://..."}.
+     Empty values show nothing. When a value is filled in, the matching footer link or email box appears with no code change. */
+  var CFG={tiktok:"",linkedin:"",leadEndpoint:""}, pending=[];
+  function load(){try{var s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&Array.isArray(s.cards)){s.tips=s.tips||{};return s}}catch(e){}return{cards:[],tips:{}}}
+  var store=load();
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){blocked=true}}
+  function h(tag,at){var el=document.createElement(tag);at=at||{};for(var k in at){if(k==="class")el.className=at[k];else if(k==="text")el.textContent=at[k];else if(k.slice(0,2)==="on")el.addEventListener(k.slice(2),at[k]);else el.setAttribute(k,at[k])}
+    for(var i=2;i<arguments.length;i++){var c=arguments[i];if(c==null)continue;el.appendChild(typeof c==="string"?document.createTextNode(c):c)}return el}
+  function clear(n){while(n.firstChild)n.removeChild(n.firstChild)}
+  function top(){window.scrollTo(0,0)}
+  function isHttps(u){return typeof u==="string"&&/^https:\/\//.test(u)}
+
+  /* ---------- optional: email box and follow links ---------- */
+  function fillLead(d,src){
+    clear(d);
+    var f=h("form",{novalidate:"novalidate"});
+    var inp=h("input",{type:"email",id:"lead-"+src,"aria-label":"Your email",placeholder:"you@example.com",autocomplete:"email",required:"required"});
+    var msg=h("p",{class:"small mut","aria-live":"polite",text:"Only your email is sent. Your cards stay on your device. Unsubscribe any time."});
+    var go=h("button",{class:"ghost",type:"submit",text:"Email me new tips"});
+    f.appendChild(h("h3",{text:"Want a new tip now and then?"}));f.appendChild(inp);f.appendChild(go);f.appendChild(msg);
+    f.addEventListener("submit",function(e){e.preventDefault();
+      if(!inp.validity.valid||!inp.value.trim()){msg.textContent="Enter an email like you@example.com.";inp.focus();return}
+      go.disabled=true;go.textContent="Sending...";
+      fetch(CFG.leadEndpoint,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({email:inp.value.trim(),source:src,site:"aideaguy"})})
+        .then(function(r){if(!r.ok)throw 0;f.innerHTML="";f.appendChild(h("p",{text:"Thanks. You're on the list."}))})
+        .catch(function(){go.disabled=false;go.textContent="Email me new tips";msg.textContent="That didn't go through. Check your connection and try again."})});
+    d.appendChild(f)}
+  function leadSlot(src){var d=h("div",{class:"slot"});if(isHttps(CFG.leadEndpoint))fillLead(d,src);else pending.push([d,src]);return d}
+  function followEl(){var tt=isHttps(CFG.tiktok),li=isHttps(CFG.linkedin);if(!tt&&!li)return null;
+    var p=h("p",{class:"follow"},"Follow for more tips: ");
+    if(tt)p.appendChild(h("a",{href:CFG.tiktok,target:"_blank",rel:"noopener",text:"TikTok"}));
+    if(li)p.appendChild(h("a",{href:CFG.linkedin,target:"_blank",rel:"noopener",text:"LinkedIn"}));return p}
+  var followSlots=[];
+  function followSlot(){var d=h("div");var e=followEl();if(e)d.appendChild(e);else followSlots.push(d);return d}
+  try{fetch("links.json",{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(j){
+    if(!j)return;CFG.tiktok=j.tiktok||"";CFG.linkedin=j.linkedin||"";CFG.leadEndpoint=j.leadEndpoint||"";
+    pending.forEach(function(p){if(isHttps(CFG.leadEndpoint)&&document.body.contains(p[0]))fillLead(p[0],p[1])});
+    followSlots.forEach(function(d){var e=followEl();if(e&&document.body.contains(d))d.appendChild(e)})}).catch(function(){})}catch(e){}
+
+  /* ---------- quick questions (3) ---------- */
+  var Q=[
+    {k:"goal",ask:"What do you want AI to help you with?",opts:[["work","Get something done (work or school)"],["learn","Learn something"],["make","Make or write something"],["earn","Earn or grow (business, channel, side income)"],["decide","Make a decision"]]},
+    {k:"exp",ask:"How has AI gone for you so far?",opts:[["new","I have barely tried it"],["meh","I tried it and the answers felt generic"],["often","I use it often and want more from it"]]},
+    {k:"snag",ask:"What gets in your way most?",opts:[["ask","I don't know what to ask"],["generic","Answers are generic or off"],["trust","I'm not sure I can trust the answers"],["finish","I start things but don't finish them"]]}
+  ];
+  /* Tip pools. Each tip has an id so the page can remember what you found useful (on this device only). */
+  var TIPS={
+    ask:[["a1","Start with the result you want and who it is for, not a question."],["a2","Tell the AI to ask you up to 3 questions before it answers."],["a3","Paste something real (an email, a list, a draft) instead of describing it."],["a4","Say what you already tried. It stops the AI repeating the obvious."],["a5","Ask: \"What would you need to know from me to do this well?\""],["a6","Start small: ask for an outline first, then fill it in one part at a time."]],
+    generic:[["g1","Give context: who you are, what you tried, and what a good answer looks like."],["g2","Ask for 2 options with the tradeoffs, not one answer."],["g3","Say what to avoid. \"No jargon, under 150 words\" changes a lot."],["g4","Paste an example of what you like and say \"more like this.\""],["g5","Give it a role and an audience: \"Explain this to a busy manager.\""],["g6","If the first answer is off, say what is off and ask again. Treat it as a conversation."]],
+    trust:[["t1","Ask it to list what it is unsure about and what you should check yourself."],["t2","Check one claim against a source you trust before you act on it."],["t3","For money, health or legal choices, use AI to prepare your questions, then ask a professional."],["t4","Ask: \"What would make this answer wrong?\""],["t5","Ask the same question to a second AI and compare. Disagreement shows where to look."],["t6","Be most careful with numbers, dates, names and quotes. Those are where AI slips."]],
+    finish:[["f1","Ask for the smallest next step you can do in 10 minutes."],["f2","Pick a time to start, then come back and write what happened."],["f3","Work on one goal at a time. Park the rest in a list."],["f4","Tell the AI your deadline and ask it to work backward from it."],["f5","Ask what the very first thing is and do only that. Then ask again."],["f6","Write down how you will know you are done before you start."]]
+  };
+  var GOALT={
+    work:[["w1","Paste the real task and the deadline. Ask what to do first."],["w2","Ask it to turn a messy brain-dump into a short priority list."],["w3","Have it draft the first version of the email or doc, then you edit."]],
+    learn:[["l1","Ask it to quiz you instead of only explaining. You remember what you answer."],["l2","Ask for a 3-step learning path with one small project at each step."],["l3","Explain the idea back in your own words and ask it to find the gaps."]],
+    make:[["m1","Show it an example you like and ask for a rough first draft you can edit."],["m2","Ask for 5 different angles before you pick one to develop."],["m3","Edit hard. Tell it what to cut and what to keep, then ask for a second draft."]],
+    earn:[["e1","Ask for the cheapest way to test the idea this week, before building anything."],["e2","Ask who would pay for this and what they pay for now. Check that with a real person."],["e3","Treat any income promise, from AI or from anyone, as unproven until you see real results."]],
+    decide:[["d1","Ask for the strongest argument against your favorite option."],["d2","List what you would regret in a year if you chose each option."],["d3","Ask what information would change your mind, then go and get it."]]
+  };
+  var EXP={new:"You don't need special wording. Plain sentences work, and you can say \"I'm new to this, explain simply.\"",meh:"Generic answers usually come from generic questions. Adding context usually fixes most of it.",often:"Save the prompts that worked and reuse them. A short list of your own beats starting fresh each time."};
+  var GOALTXT={work:"Get something done for work or school",learn:"Learn something I care about",make:"Make or write something",earn:"Earn or grow something (business, channel, side income)",decide:"Make a decision I've been stuck on"};
+  function ts(id){return store.tips[id]||(store.tips[id]={seen:0,rate:""})}
+  function pick(pool,n){var c=pool.filter(function(t){return ts(t[0]).rate!=="down"});
+    c.sort(function(a,b){var A=ts(a[0]),B=ts(b[0]);return(A.seen*2-(A.rate==="up"?1:0))-(B.seen*2-(B.rate==="up"?1:0))});return c.slice(0,n)}
+
+  var run={mode:"home",qi:0,qz:{},f:{},tipList:null};
+  function resetRun(){run={mode:"home",qi:0,qz:{},f:{},tipList:null}}
+
+  /* ---------- a finished example (used on home and in the form) ---------- */
+  var EX={goal:"Send my resume to 5 companies I like this week.",why:"I need a better job before my lease renews.",done:"5 applications sent and 5 confirmation emails in my inbox.",fence:"No paid job boards. At most 1 hour a day.",decides:"Me",known:"3 of the 5 are hiring.",guess:"That they reply within a week.",step:"Open my resume and list 5 companies.",when:"Today",size:"About an hour"};
+  function exampleEl(){
+    var d=h("div");
+    var rows=[["1. Goal",EX.goal],["2. Why",EX.why],["3. Done when",EX.done],["4. Fence",EX.fence],["5. Who decides",EX.decides],["6. Known / guessing","Known: "+EX.known+"\nGuessing: "+EX.guess],["7. First step",EX.step+" ("+EX.when+", "+EX.size.toLowerCase()+")"],["8. Report back","Result, evidence, what I could not check, next step"]];
+    var box=h("div",{class:"cardbox"});rows.forEach(function(r){box.appendChild(h("div",{class:"row"},h("b",{text:r[0]}),r[1]))});d.appendChild(box);
+    d.appendChild(h("p",{class:"mut",style:"margin-top:12px",text:"The card turns into this to-do list:"}));
+    var ul=h("ul",{class:"todo"});["First step (Today): "+EX.step,"Finish line: "+EX.done,"Stay inside the fence: "+EX.fence,"Check this guess: "+EX.guess,"Report back: result, evidence, what I could not check, next step"].forEach(function(t){
+      var cb=h("input",{type:"checkbox",disabled:"disabled","aria-hidden":"true"});ul.appendChild(h("li",{},h("label",{style:"cursor:default"},cb,h("span",{text:t}))))});
+    d.appendChild(ul);return d}
+
+  /* ---------- views ---------- */
+  function vHome(){
+    clear(app);
+    var big=h("span",{class:"wm big","aria-hidden":"true"});
+    [["a","A"],["i","I"],["dea","dea"],["guy","Guy"],["dev",".dev"]].forEach(function(x){big.appendChild(h("span",{class:x[0],text:x[1]}))});
+    app.appendChild(h("section",{class:"hero"},
+      big,h("span",{class:"wmcap"},h("b",{class:"c1",text:"AI"})," + ",h("b",{class:"c2",text:"Idea"})," + ",h("b",{text:"Guy"}),": the I is shared"),
+      h("h1",{text:"Get more out of AI in 2 minutes."}),
+      h("p",{class:"lede",text:"Answer 3 quick questions. Get tips that fit you, a prompt to paste into any AI, and a simple to-do card for your next step."}),
+      h("button",{class:"btn",type:"button",text:"Start (30 seconds)",onclick:function(){run.mode="quiz";run.qi=0;route()}}),
+      h("p",{class:"small mut",style:"margin-top:12px",text:"Free. No sign-up. Nothing leaves your device."})));
+    app.appendChild(h("section",{class:"sect"},h("h2",{text:"What is AIdeaGuy?"}),
+      h("p",{style:"margin-top:8px",text:"Short, practical ways to use AI to get things done: from \"I should\" to \"I did.\" This page is the first tool."})));
+    app.appendChild(h("section",{class:"sect"},h("h2",{text:"How it works"}),
+      h("ol",{class:"steps"},
+        h("li",{},h("b",{text:"Answer 3 questions"}),"About what you want, how AI has gone so far, and what gets in your way."),
+        h("li",{},h("b",{text:"Get tips and a prompt"}),"Matched to your answers. Copy the prompt into ChatGPT, Claude, Gemini or any AI."),
+        h("li",{},h("b",{text:"Make your task card"}),"Eight short questions that turn your goal into a to-do list you can download and tick off."))));
+    var ex=h("details",{class:"f",style:"margin-top:24px"});ex.appendChild(h("summary",{},h("span",{text:"See a finished card"})));ex.appendChild(h("div",{class:"body"},exampleEl()));app.appendChild(ex);window.initWm&&window.initWm();
+    app.appendChild(h("section",{class:"sect"},h("h2",{text:"Already know what you want to do?"}),
+      h("button",{class:"linkbtn",type:"button",text:"Skip to the task card",onclick:function(){run.mode="form";route()}})));
+    app.appendChild(followSlot());
+    app.appendChild(h("p",{class:"small mut",style:"margin-top:36px",text:"A thinking aid, not therapy, medical, legal or financial advice. In crisis, call or text 988 (US) or your local emergency number."}));
+  }
+
+  function vQuiz(){
+    clear(app);var q=Q[run.qi];
+    app.appendChild(h("p",{class:"small mut",text:"Question "+(run.qi+1)+" of "+Q.length}));
+    app.appendChild(h("div",{class:"bar","aria-hidden":"true"},h("i",{style:"width:"+Math.round((run.qi)/Q.length*100+8)+"%"})));
+    app.appendChild(h("h2",{text:q.ask}));
+    var box=h("div",{class:"stack"});
+    q.opts.forEach(function(o){box.appendChild(h("button",{class:"chip",type:"button",text:o[1],"aria-pressed":String(run.qz[q.k]===o[0]),onclick:function(){
+      run.qz[q.k]=o[0];if(run.qi<Q.length-1){run.qi++}else{run.mode="plan";run.tipList=null}route()}}))});
+    app.appendChild(box);
+    app.appendChild(h("button",{class:"linkbtn back",type:"button",text:"Back",onclick:function(){if(run.qi>0)run.qi--;else run.mode="home";route()}}));
+  }
+
+  function promptText(){
+    return "I want help with: [describe it in one line].\n\nBefore you answer, ask me up to 3 short questions.\nThen give me:\n1. The first step I can do in 10 minutes.\n2. One way this could go wrong.\n3. What you are unsure about, so I know what to check myself.";
+  }
+  function copyBtn(label,getText,cls){var b=h("button",{class:cls||"ghost",type:"button",text:label});
+    b.addEventListener("click",function(){var t=getText();var ok=function(){b.textContent="Copied"};
+      var fb=function(){var ta=h("textarea",{"aria-hidden":"true",style:"position:fixed;opacity:0;left:-9999px"});ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");ok()}catch(e){b.textContent="Press and hold to copy"}document.body.removeChild(ta)};
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb()});return b}
+
+  function vPlan(){
+    clear(app);var z=run.qz;
+    if(!run.tipList){run.tipList=pick(TIPS[z.snag],3).concat(pick(GOALT[z.goal],1));run.tipList.forEach(function(t){ts(t[0]).seen++});save()}
+    app.appendChild(h("h2",{text:"Here is what to try"}));
+    var ul=h("ul",{class:"tips"});
+    run.tipList.forEach(function(t){
+      var st=ts(t[0]);var up=h("button",{type:"button",text:"Useful","aria-pressed":String(st.rate==="up")});var dn=h("button",{type:"button",text:"Not for me","aria-pressed":String(st.rate==="down")});
+      function setR(r){st.rate=st.rate===r?"":r;up.setAttribute("aria-pressed",String(st.rate==="up"));dn.setAttribute("aria-pressed",String(st.rate==="down"));save();note.textContent=st.rate==="down"?"Got it. We'll show different tips next time.":st.rate==="up"?"Noted. We'll keep tips like this.":""}
+      up.addEventListener("click",function(){setR("up")});dn.addEventListener("click",function(){setR("down")});
+      var note=h("span",{class:"small mut","aria-live":"polite"});
+      ul.appendChild(h("li",{},h("span",{class:"t",text:t[1]}),h("div",{class:"rate"},up,dn,note)))});
+    app.appendChild(ul);
+    app.appendChild(h("p",{class:"small mut",style:"margin-top:12px",text:"Tips you haven't seen come first, and tips you mark \"Not for me\" stay hidden. This is kept on your device only."}));
+    app.appendChild(h("p",{class:"mut",style:"margin-top:12px",text:EXP[z.exp]}));
+    app.appendChild(h("section",{class:"sect"},h("h3",{text:"Paste this into any AI"}),
+      h("pre",{class:"prompt",text:promptText()}),
+      h("div",{class:"stack"},copyBtn("Copy prompt",promptText))));
+    app.appendChild(h("section",{class:"sect"},h("h3",{text:"Want it as a to-do list?"}),
+      h("p",{class:"mut",text:"Turn your goal into a task card in about a minute. You can download it and tick things off."}),
+      h("div",{class:"stack"},h("button",{class:"btn",type:"button",text:"Make my to-do card",onclick:function(){if(!run.f.goal)run.f.goal=GOALTXT[z.goal]||"";run.mode="form";route()}}))));
+    app.appendChild(leadSlot("plan"));
+    app.appendChild(h("button",{class:"linkbtn back",type:"button",text:"Change my answers",onclick:function(){run.mode="quiz";run.qi=0;route()}}));
+  }
+
+  /* ---------- the eight-field card ---------- */
+  var F=[
+    {n:1,k:"goal",must:1,label:"What is the goal?",help:"The result you want, and who it is for. One sentence.",ex:EX.goal},
+    {n:2,k:"why",label:"Why does it matter?",help:"What this serves, or what happens if you skip it.",ex:EX.why},
+    {n:3,k:"done",must:1,label:"How will you know it is done?",help:"Something you or a stranger could check: a number, something you can see, or a person saying yes.",ex:EX.done},
+    {n:4,k:"fence",label:"What will you NOT do or spend?",help:"A limit on time, money or scope. It protects you.",ex:EX.fence},
+    {n:5,k:"decides",type:"chips",label:"Who decides if it is good enough?",opts:["Me","Me and one other person","Someone else"]},
+    {n:6,k:"known",label:"What do you know, and what are you guessing?",type:"two",help:"Naming a guess tells you what to check first."},
+    {n:7,k:"step",must:1,label:"What is the first step, and when?",help:"Something you can do in 10 minutes or less. A physical action: open, call, write, look up, ask.",ex:EX.step,type:"step"},
+    {n:8,k:"report",label:"How will you report back?",type:"fixed"}
+  ];
+  var REPORT="Result: DONE, PARTIAL, NOT CHECKED or BLOCKED.\nEvidence: what you did or saw.\nCould not check: say so plainly. That counts as a good answer.\nNext: the one thing that moves it forward.";
+
+  function vForm(){
+    clear(app);var f=run.f;
+    app.appendChild(h("h2",{text:"Your task card"}));
+    app.appendChild(h("p",{class:"mut",style:"margin-top:6px",text:"Fill the three marked Start here. The rest make it stronger and are optional."}));
+    var exd=h("details",{class:"f"});exd.appendChild(h("summary",{},h("span",{text:"See a finished example"})));exd.appendChild(h("div",{class:"body"},exampleEl()));app.appendChild(exd);
+    var cnt=h("p",{class:"cnt","aria-live":"polite",style:"margin-top:14px"});app.appendChild(cnt);
+    function essentials(){var n=0;["goal","done","step"].forEach(function(k){if((f[k]||"").trim())n++});return n}
+    function upd(){cnt.textContent=essentials()+" of 3 essentials done"}
+    F.forEach(function(d){
+      var det=h("details",{class:"f"});if(d.must)det.setAttribute("open","");
+      det.appendChild(h("summary",{},h("span",{},d.n+". "+d.label,h("span",{class:"tagc"+(d.must?" must":""),text:d.must?"Start here":"optional"}))));
+      var body=h("div",{class:"body"});
+      if(d.help)body.appendChild(h("div",{class:"help",text:d.help}));
+      var id="fld-"+d.k;
+      if(d.type==="chips"){
+        var row=h("div",{class:"inline"});d.opts.forEach(function(o){var b=h("button",{class:"chip",type:"button",text:o,"aria-pressed":String(f[d.k]===o),onclick:function(){f[d.k]=o;Array.prototype.forEach.call(row.children,function(x){x.setAttribute("aria-pressed","false")});b.setAttribute("aria-pressed","true")}});row.appendChild(b)});body.appendChild(row);
+      }else if(d.type==="fixed"){
+        body.appendChild(h("pre",{class:"prompt",text:REPORT}));
+      }else if(d.type==="two"){
+        var a=h("textarea",{id:id+"-k","aria-label":"What I have checked",placeholder:"What I have checked",style:"min-height:64px"});a.value=f.known||"";a.addEventListener("input",function(){f.known=a.value});
+        var b2=h("textarea",{id:id+"-g","aria-label":"What I am guessing",placeholder:"What I am guessing",style:"min-height:64px;margin-top:8px"});b2.value=f.guess||"";b2.addEventListener("input",function(){f.guess=b2.value});
+        body.appendChild(a);body.appendChild(b2);
+      }else{
+        var ta=h("textarea",{id:id,"aria-label":d.label,placeholder:d.ex?"Example: "+d.ex:""});ta.value=f[d.k]||"";ta.addEventListener("input",function(){f[d.k]=ta.value;upd()});
+        body.appendChild(ta);
+        if(d.ex)body.appendChild(h("button",{class:"linkbtn",type:"button",text:"Use the example",onclick:function(){ta.value=d.ex;f[d.k]=d.ex;upd();ta.focus()}}));
+        if(d.type==="step"){
+          body.appendChild(h("label",{style:"margin-top:8px",text:"When will you start?"}));
+          var w=h("div",{class:"inline"});["Today","Tomorrow","This week"].forEach(function(o){var c=h("button",{class:"chip",type:"button",text:o,"aria-pressed":String(f.when===o),onclick:function(){f.when=o;Array.prototype.forEach.call(w.children,function(x){x.setAttribute("aria-pressed","false")});c.setAttribute("aria-pressed","true")}});w.appendChild(c)});body.appendChild(w);
+          body.appendChild(h("label",{style:"margin-top:12px",text:"How big is the whole thing?"}));
+          var s=h("div",{class:"inline"});["Under 10 min","About an hour","A few hours","Days or more"].forEach(function(o){var c=h("button",{class:"chip",type:"button",text:o,"aria-pressed":String(f.size===o),onclick:function(){f.size=o;Array.prototype.forEach.call(s.children,function(x){x.setAttribute("aria-pressed","false")});c.setAttribute("aria-pressed","true")}});s.appendChild(c)});body.appendChild(s);
+        }
+      }
+      det.appendChild(body);app.appendChild(det);
+    });
+    upd();
+    var err=h("div",{class:"err",role:"alert"});app.appendChild(err);
+    app.appendChild(h("div",{class:"stack"},
+      h("button",{class:"btn",type:"button",text:"Make my to-do list",onclick:function(){
+        var miss=[];if(!(f.goal||"").trim())miss.push("the goal (1)");if(!(f.done||"").trim())miss.push("how you will know it is done (3)");if(!(f.step||"").trim())miss.push("the first step (7)");
+        if(miss.length){err.textContent="Add "+miss.join(", ")+" first. A few words is enough.";return}
+        var rec={id:Date.now(),created:new Date().toISOString(),f:JSON.parse(JSON.stringify(f)),checks:{}};store.cards.push(rec);save();run.last=rec;run.mode="done";route()}}),
+      h("button",{class:"ghost",type:"button",text:"Back",onclick:function(){run.mode=run.qz.goal?"plan":"home";route()}})));
+  }
+
+  /* ---------- the to-do list ---------- */
+  function items(c){var f=c.f,L=[];
+    L.push(["step","First step ("+(f.when||"when you choose")+"): "+f.step]);
+    L.push(["done","Finish line: "+f.done]);
+    if((f.fence||"").trim())L.push(["fence","Stay inside the fence: "+f.fence]);
+    if(f.decides&&f.decides!=="Me")L.push(["decides","Agree who decides: "+f.decides]);
+    if((f.guess||"").trim())L.push(["guess","Check this guess: "+f.guess]);
+    L.push(["report","Report back: result, evidence, what I could not check, next step"]);
+    return L}
+  function asText(c){var f=c.f;
+    var t="MY PLAN: "+f.goal+"\nMade at AIdeaGuy.dev on "+new Date(c.created).toLocaleDateString()+"\n\nTO DO\n";
+    items(c).forEach(function(i){t+="- [ ] "+i[1]+"\n"});
+    t+="\nTHE CARD\n1. Goal: "+f.goal+"\n2. Why: "+(f.why||"(not filled)")+"\n3. Done when: "+f.done+"\n4. Fence: "+(f.fence||"(none set)")+"\n5. Who decides: "+(f.decides||"Me")+"\n6. Known: "+(f.known||"(not filled)")+"\n   Guessing: "+(f.guess||"(not filled)")+"\n7. First step: "+f.step+" ("+(f.when||"no date")+"; size: "+(f.size||"not set")+")\n8. Report back: "+REPORT.replace(/\n/g," ")+"\n";
+    return t}
+  function download(name,text){try{var b=new Blob([text],{type:"text/plain;charset=utf-8"});var u=URL.createObjectURL(b);var a=h("a",{href:u,download:name});document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u)},1500);return true}catch(e){return false}}
+  function listEl(c,persist){var ul=h("ul",{class:"todo"});
+    items(c).forEach(function(i){var cb=h("input",{type:"checkbox"});cb.checked=!!c.checks[i[0]];
+      cb.addEventListener("change",function(){c.checks[i[0]]=cb.checked;save();if(persist)persist()});
+      ul.appendChild(h("li",{},h("label",{},cb,h("span",{text:i[1]}))))});return ul}
+  function vDone(){
+    clear(app);var c=run.last;
+    app.appendChild(h("h2",{text:"Your to-do list is ready"}));
+    app.appendChild(h("p",{class:"mut",style:"margin-top:6px",text:"Goal: "+c.f.goal}));
+    app.appendChild(listEl(c));
+    var msg=h("p",{class:"small mut","aria-live":"polite"});
+    app.appendChild(h("div",{class:"stack"},
+      h("button",{class:"btn",type:"button",text:"Download my list",onclick:function(){var ok=download("my-task-card.txt",asText(c));msg.textContent=ok?"Download started. If nothing happened, use Copy instead.":"Your browser blocked the download. Use Copy instead."}}),
+      copyBtn("Copy my list",function(){return asText(c)}),
+      h("button",{class:"ghost",type:"button",text:"See it in My cards",onclick:function(){location.hash="#cards"}})));
+    app.appendChild(msg);
+    app.appendChild(h("div",{class:"soft",text:"Saved in this browser. Come back to My cards to tick things off. Downloading gives you a copy you can keep or send."}));
+    if(blocked)app.appendChild(h("div",{class:"note",text:"This browser blocked saving, so the list will be lost when you close the page. Download or copy it now."}));
+    app.appendChild(h("section",{class:"sect"},h("h3",{text:"One more habit worth having"}),
+      h("p",{class:"mut",text:"AI can sound sure and be wrong. Here is a 2-minute way to check it before you act."}),
+      h("div",{class:"stack"},h("a",{class:"ghost",style:"text-decoration:none;display:inline-flex;align-items:center;justify-content:center;color:var(--fg)",href:"#more",text:"Learn the check"}))));
+    app.appendChild(leadSlot("done"));
+    app.appendChild(h("button",{class:"linkbtn",type:"button",text:"Make another card",onclick:function(){resetRun();run.mode="home";route()}}));
+  }
+
+  function vCards(){
+    clear(app);app.appendChild(h("h2",{text:"My cards"}));
+    var cs=store.cards;
+    if(!cs.length){app.appendChild(h("div",{class:"empty",style:"margin-top:12px"},h("p",{text:"No cards yet. Make one and your to-do list shows up here, where you can tick things off."}),h("div",{class:"stack"},h("button",{class:"btn",type:"button",text:"Start",onclick:function(){resetRun();location.hash="#start"}}))));return}
+    var started=cs.filter(function(c){return c.checks.step}).length;
+    var stats=h("div",{class:"stats"},h("div",{},h("b",{text:String(cs.length)}),"cards"),h("div",{},h("b",{text:String(started)}),"first steps done"));
+    app.appendChild(stats);
+    cs.slice().reverse().forEach(function(c){
+      var box=h("section",{class:"sect"});box.appendChild(h("h3",{text:c.f.goal}));
+      box.appendChild(h("p",{class:"small mut",text:new Date(c.created).toLocaleDateString()}));
+      box.appendChild(listEl(c,function(){var n=store.cards.filter(function(x){return x.checks.step}).length;stats.children[1].firstChild.textContent=String(n)}));
+      var m=h("p",{class:"small mut","aria-live":"polite"});
+      box.appendChild(h("div",{class:"stack"},copyBtn("Copy list",function(){return asText(c)}),
+        h("button",{class:"ghost",type:"button",text:"Download list",onclick:function(){m.textContent=download("my-task-card.txt",asText(c))?"Download started. If nothing happened, use Copy.":"Download blocked. Use Copy."}})));
+      box.appendChild(m);app.appendChild(box)});
+    var w=h("p",{class:"small mut",style:"margin-top:32px"},"Cards and tip ratings are saved only in this browser on this device. ");
+    var wb=h("button",{class:"linkbtn",type:"button",text:"Delete my saved data"});
+    wb.addEventListener("click",function(){if(wb.getAttribute("data-armed")!=="1"){wb.setAttribute("data-armed","1");wb.textContent="Tap again to delete everything. This cannot be undone.";return}
+      store={cards:[],tips:{}};try{localStorage.removeItem(KEY)}catch(e){}vCards()});
+    w.appendChild(wb);app.appendChild(w);
+  }
+
+  /* ---------- Go further: value first, then an optional next step ---------- */
+  var CHECKPROMPT="List every factual claim in your last answer (numbers, dates, names, quotes).\nMark the 2 that matter most for my decision.\nFor each one, tell me how likely you are to be wrong and how I can check it myself.";
+  function vMore(){
+    clear(app);
+    app.appendChild(h("h2",{text:"Check AI before you trust it"}));
+    app.appendChild(h("p",{style:"margin-top:8px",text:"AI can sound sure and still be wrong. You don't need a tool to catch most of it. You need a habit."}));
+    app.appendChild(h("h3",{style:"margin-top:20px",text:"The 2-minute habit"}));
+    app.appendChild(h("ol",{class:"plain"},h("li",{text:"Ask the AI to list the claims it made."}),h("li",{text:"Pick the one or two that matter for your decision."}),h("li",{text:"Check them with a second AI or a source you trust."})));
+    app.appendChild(h("pre",{class:"prompt",text:CHECKPROMPT}));
+    app.appendChild(h("div",{class:"stack"},copyBtn("Copy this prompt",function(){return CHECKPROMPT})));
+
+    app.appendChild(h("section",{class:"sect"},h("h3",{text:"What a real check looks like"}),
+      h("p",{class:"mut",style:"margin-top:6px",text:"We sent a false claim to two different AI models and asked each one to judge it. This was recorded on 21 Nov 2026."}),
+      h("div",{class:"vote"},
+        h("div",{},h("b",{text:"Claim: "}),"\"The Eiffel Tower is located in Rome, Italy.\""),
+        h("div",{},h("b",{text:"Model 1 (GPT-OSS): "}),"FALSE. \"Eiffel Tower is in Paris, France.\""),
+        h("div",{},h("b",{text:"Model 2 (Qwen): "}),"FALSE. \"It is in Paris, France.\""),
+        h("div",{},h("b",{text:"Result: "}),"flagged as false, in under half a second.")),
+      h("p",{class:"mut",text:"Two models agreeing lowers the risk. It does not remove it: models can be wrong together, so check anything that really matters."})));
+
+    app.appendChild(h("section",{class:"sect"},h("h3",{text:"Doing this by hand every time is slow"}),
+      h("p",{style:"margin-top:6px",text:"A PAI (personal AI) is an AI assistant that is yours. It has its own ID and a trust score built from what it actually does, and it can run checks like the one above for you."}),
+      h("p",{class:"mut",text:"It is optional. Nothing on this site needs one."})));
+
+    app.appendChild(h("section",{class:"sect"},h("h3",{text:"What a PAI does today"}),
+      h("ul",{class:"plain"},h("li",{text:"Gets an ID and a starting trust score that moves as it earns trust."}),h("li",{text:"Runs live checks like the one above, and shows you each model's answer."})),
+      h("h3",{style:"margin-top:20px",text:"What it does not do yet"}),
+      h("p",{style:"margin-top:6px",text:"Manage your email, calendar or money. Ask you about your rules and limits. Learn from your history. Please don't connect any of those. Nothing should act for you until you have set rules."})));
+
+    app.appendChild(h("section",{class:"sect"},h("h3",{text:"Why you can look before you trust it"}),
+      h("p",{style:"margin-top:6px",text:"The checker behind it is open source (Apache-2.0), free, and needs no account. It reports what it can confirm and what it cannot. It is not a guarantee that something is true."}),
+      h("p",{class:"mut",text:"If you want to try it: you name your PAI, save an ID and key, and see a live check with each model's vote. It takes about a minute and opens TrustShell.dev in a new tab."}),
+      h("div",{class:"stack"},h("a",{class:"ghost",style:"text-decoration:none;display:inline-flex;align-items:center;justify-content:center;color:var(--fg)",href:"https://www.trustshell.dev/create",target:"_blank",rel:"noopener",text:"Try a PAI (optional)"}))));
+    app.appendChild(followSlot());
+  }
+
+  /* ---------- router ---------- */
+  function route(){
+    var v=(location.hash||"#start").slice(1);if(["start","cards","more"].indexOf(v)<0)v="start";
+    ["start","cards","more"].forEach(function(k){var a=document.getElementById("n-"+k);if(k===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+    if(v==="start"){({home:vHome,quiz:vQuiz,plan:vPlan,form:vForm,done:vDone})[run.mode]()}
+    else if(v==="cards")vCards();else vMore();
+    top();
+  }
+  window.addEventListener("hashchange",function(){if((location.hash==="#start"||location.hash==="")&&run.mode==="done")run.mode="home";route()});
+  document.getElementById("n-start").addEventListener("click",function(){if(location.hash==="#start"||!location.hash){resetRun();route()}});
+  route();
+})();
+</script>
+</body></html>
